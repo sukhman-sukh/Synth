@@ -8,14 +8,14 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'helpers/navigation_helper.dart';
 import 'widgets/widgets.dart';
 
-class SyncWave extends PlatformAwareBuilder {
-  const SyncWave({Key? key, this.themeMode}) : super(key: key);
+class SyncWave extends StatelessWidget {
+  const SyncWave({super.key, this.themeMode});
   final AdaptiveThemeMode? themeMode;
 
   @override
-  Widget defaultBuilder(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return AdaptiveTheme(
-      light: ThemeData(
+      light: ThemeData( 
         brightness: Brightness.light,
         primarySwatch: Colors.lightBlue,
         scaffoldBackgroundColor: Colors.white,
@@ -104,49 +104,16 @@ class SyncWave extends PlatformAwareBuilder {
         ),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Colors.white,
-        ),
+        ),        
       ),
       initial: themeMode ?? AdaptiveThemeMode.system,
       builder: (theme, darkTheme) {
-        return ValueListenableBuilder(
-          valueListenable: Hive.box(UserPrefsHelper.hiveBoxName).listenable(),
-          builder: (context, box, _) {
             return MaterialApp(
               theme: theme,
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
               initialRoute: NavigationHelper.initial,
               onGenerateRoute: NavigationHelper.onGenerateRoute,
-              locale: UserPrefsHelper().defaultLocale,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              localeResolutionCallback: (locale, supportedLocales) {
-                final defaultLocale = UserPrefsHelper().defaultLocale;
-                if (defaultLocale != null) {
-                  Intl.defaultLocale = defaultLocale.toLanguageTag();
-                  return defaultLocale;
-                }
-                if (locale != null && supportedLocales.contains(locale)) {
-                  Intl.defaultLocale = locale.toLanguageTag();
-                  return locale;
-                }
-
-                final List<Locale> systemLocales =
-                    View.of(context).platformDispatcher.locales;
-                for (final systemLocale in systemLocales) {
-                  final lang = Locale.fromSubtags(
-                      languageCode: systemLocale.languageCode);
-                  if (supportedLocales.contains(systemLocale)) {
-                    Intl.defaultLocale = systemLocale.toLanguageTag();
-                    return systemLocale;
-                  } else if (supportedLocales.contains(lang)) {
-                    Intl.defaultLocale = lang.toLanguageTag();
-                    return lang;
-                  }
-                }
-
-                return const Locale.fromSubtags(languageCode: 'en');
-              },
               builder: (context, child) {
                 if (Platform.isLinux || Platform.isMacOS) {
                   return child ?? const SizedBox();
@@ -164,8 +131,8 @@ class SyncWave extends PlatformAwareBuilder {
                   );
               },
             );
-          },
-        );
+        //   },
+        // );
       },
     );
   }

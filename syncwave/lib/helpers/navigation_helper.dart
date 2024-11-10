@@ -1,15 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:syncwave/screens/home.dart';
 import 'package:syncwave/screens/account_screen.dart';
+import 'package:syncwave/screens/master_screen.dart';
 import 'package:syncwave/screens/splash_screen.dart';
-// import '../decorators/deeplink_decorator.dart';
-// import '../screens/about_screen.dart';
-// import '../screens/create_account_screen.dart';
-// import '../screens/file_history_screen.dart';
-// import '../screens/home/home_screen.dart';
-// import '../screens/settings_screen.dart';
-// import '../screens/splash_screen.dart';
-// import '../screens/support_screen.dart';
+import 'package:syncwave/screens/client_screen.dart';
 
 class NavigationHelper {
   static const initial = '/';
@@ -17,6 +11,8 @@ class NavigationHelper {
   static const home = '/home';
   static const settings = '/settings';
   static const about = '/room';
+  static const masterScreen = '/masterScreen';
+  static const clientScreen = '/clientScreen';
   static const accountScreen = '/accountScreen';
   static const fileHistory = '/fileHistory';
 
@@ -51,6 +47,12 @@ class NavigationHelper {
           canPop: false,
           child: AccountScreen(),
         );
+        break;
+      case masterScreen:
+        routeWidget = MasterPage();
+        break;
+      case clientScreen:
+        routeWidget = ClientPage();
         break;
       // case settings:
       //   routeWidget = const SettingsScreen();

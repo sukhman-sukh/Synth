@@ -14,7 +14,7 @@ class AccountScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              Navigator.pushNamed(context, NavigationHelper.accountScreen);
+              Navigator.pushNamed(context, NavigationHelper.home);
             },
           ),
         ],

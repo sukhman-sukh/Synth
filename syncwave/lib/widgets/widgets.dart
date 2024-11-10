@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'dart:async';
 import 'package:lottie/lottie.dart';
-import 'package:wifi_flutter/wifi_flutter.dart';
+// import 'package:wifi_flutter/wifi_flutter.dart';
 import '../core/wifi_scanner.dart';
 
-part 'wifi_scanner_widget.dart';
+// part 'platform_aware_builder.dart';
+// part 'platform_aware_switch.dart';
+// part 'wifi_scanner_widget.dart';

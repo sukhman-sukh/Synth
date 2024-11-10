@@ -14,32 +14,67 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.account_circle),
             onPressed: () {
-              Navigator.pushNamed(context, NavigationHelper.accountScreen);
+              Navigator.pushNamed(context, NavigationHelper.home);
             },
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // WifiScanner widget goes here
-            Expanded(
-              child: WifiNetworkListScreen(),
+      // body: Padding(
+      // padding: const EdgeInsets.all(16.0),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // 0.5 Above Middle Row
+          const Spacer(flex: 1),
+          ElevatedButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Sync Button Pressed'),
+                  action: SnackBarAction(
+                    label: 'Go Back',
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              );
+            },
+            child: const Text('Sync Now'),
+          ),
+
+          // Middle Row Spacer
+          // const Spacer(flex: 1),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, NavigationHelper.masterScreen);
+                  },
+                  child: const Text('Master Screen'),
+                ),
+                const SizedBox(width: 15), // Padding between buttons
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                        context, NavigationHelper.clientScreen);
+                  },
+                  child: const Text('Slave Screen'),
+                ),
+              ],
             ),
-            // Button below WifiScanner widget
-            ElevatedButton(
-              onPressed: () {
-                // Action to perform when the button is pressed
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Sync Button Pressed')),
-                );
-              },
-              child: const Text('Sync Now'),
-            ),
-          ],
-        ),
+          ),
+
+          // Final Spacer to balance layout
+          const Spacer(flex: 2),
+        ],
       ),
+      // ),
     );
   }
 }
