@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import '../helpers/audio_sender.dart';
 // import 'package:udp/udp.dart';
 
 class AudioBroadcaster {
@@ -7,12 +8,13 @@ class AudioBroadcaster {
   final String broadcastAddress;
   final int port;
   final int chunkSize;
-
+  final ServerSocket serverSocket;
   AudioBroadcaster({
     required this.filePath,
     this.broadcastAddress = '255.255.255.255',
     this.port = 4445,
-    this.chunkSize = 1024,
+    this.chunkSize = 1024*60,
+    required this.serverSocket,
   });
 
   /// Read and send audio file chunks via UDP
@@ -53,7 +55,8 @@ class AudioBroadcaster {
       // Add a small delay to prevent congestion
       await Future.delayed(Duration(milliseconds: 10));
     }
-
+    var resp = udpSocket.send("##".codeUnits, InternetAddress(broadcastAddress), 4445);
+    print(resp);
     print("Broadcast completed.");
     // sender.close();
   }
