@@ -31,9 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 100,
               height: 100,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Text logo for SyncWave
-            Text(
+            const Text(
               'SyncWave',
               style: TextStyle(
                 fontSize: 30,

@@ -51,6 +51,7 @@ class _MasterPageState extends State<MasterPage> {
     _audioPlayer.onDurationChanged.listen((Duration duration) {
       setState(() {
         _duration = duration;
+        _getDuration();
       });
     });
 
@@ -62,6 +63,9 @@ class _MasterPageState extends State<MasterPage> {
     });
 
     // _initializeSocket();
+  }
+  void setAudio() async {
+    await _audioPlayer.setSource(AssetSource('sample.mp3'));
   }
 
   HttpServer? _server;
@@ -86,14 +90,14 @@ class _MasterPageState extends State<MasterPage> {
 
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
-  Duration _duration = Duration.zero;
+  Duration _duration = const Duration(seconds: 20, minutes: 3);
   Duration _position = Duration.zero;
   Timer? _loadingTimer;
   bool _isLoading = false;
 
   // final String _audioPath =
   //     'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-  final String _audioPath = 'assets/sample.mp3';
+  // final String _audioPath = 'assets/sample.mp3';
 
   // @override
   // void initState() {
@@ -109,20 +113,61 @@ class _MasterPageState extends State<MasterPage> {
     super.dispose();
   }
 
+  Future<void> _getDuration() async {
+    final duration = await _audioPlayer.getDuration();
+    setState(() {
+      print("Duration: $duration");
+      _duration = duration!;
+    });
+    // _duration = duration!;
+  }
+
+  // final String _audioPath =
+  //     'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+  final String _audioPath = 'sample.mp3';
+  Source get _source => DeviceFileSource(_audioPath);
+
   // Open the dialog box
   void _openAudioPlayerDialog() async {
+    // await _audioPlayer.setSourceAsset('assets/sample.mp3');
+    setAudio();
+    await _audioPlayer.resume();
+    print("Button Pressed");
     setState(() {
       _isLoading = true;
+      print("_isLoading: set to $_isLoading");
     });
 
+    // await Future.delayed(const Duration(seconds: 10));
     // Show a loading animation for 10 seconds
-    _loadingTimer = Timer(const Duration(seconds: 10), () async {
-      print(" Timer COmplete");
+    _loadingTimer = Timer(const Duration(seconds: 3), () async {
       setState(() {
         _isLoading = false;
+        Navigator.of(context).pop();
+        print("_isLoading: set to $_isLoading");
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: SizedBox(
+                height: 200,
+                child: _buildAudioPlayerView(),
+              ),
+            );
+          },
+        ).then((_) async {
+          _loadingTimer?.cancel();
+          await play();
+          _audioPlayer.stop();
+        });
       });
-      await _audioPlayer.setSourceUrl(_audioPath);
-      _audioPlayer.play(_audioPath as Source);
+      // await _audioPlayer.setSource(_source);
+      await _getDuration();
+      print("Playing Audiooo");
+      await play();
+      // await _audioPlayer.play(AssetSource('sample.mp3'));
+      // _audioPlayer.resume();
     });
 
     showDialog(
@@ -147,12 +192,13 @@ class _MasterPageState extends State<MasterPage> {
     );
   }
 
+  String playingText = "Paused";
   Widget _buildAudioPlayerView() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          _isPlaying ? "Playing Audio" : "Paused",
+          playingText,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 20),
@@ -162,7 +208,7 @@ class _MasterPageState extends State<MasterPage> {
           value: _position.inSeconds.toDouble(),
           onChanged: (value) async {
             final position = Duration(seconds: value.toInt());
-            await _audioPlayer.seek(position);
+            // await _audioPlayer.seek(position);
           },
         ),
         Padding(
@@ -183,17 +229,33 @@ class _MasterPageState extends State<MasterPage> {
             color: Colors.blue,
           ),
           onPressed: () async {
-            if (_isPlaying) {
-              await _audioPlayer.pause();
-              _isPlaying = false;
+            // await play();
+            if (_audioPlayer.state == PlayerState.playing) {
+              pause();
             } else {
-              _isPlaying = true;
-              await _audioPlayer.play(_audioPath as Source);
+              await play();
+              setState(() {
+                playingText = "Playing";
+              });
             }
           },
         ),
       ],
     );
+  }
+
+  Future<void> play() async {
+    String audioPath = 'sample.mp3';
+    await _audioPlayer.play(AssetSource(audioPath));
+    await _audioPlayer.resume();
+  }
+  //_audioPlayer.play(AssetSource('assets/sample.mp3'));
+
+  Future<void> pause() async {
+    await _audioPlayer.pause();
+    setState(() {
+      playingText = "Paused";
+    });
   }
 
   String _formatDuration(Duration duration) {
